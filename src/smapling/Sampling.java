@@ -20,6 +20,7 @@ public class Sampling extends javax.swing.JFrame {
      */
     public Sampling() {
         initComponents();
+        this.getRootPane().setDefaultButton(btnPrintLabels);
     }
 
     
