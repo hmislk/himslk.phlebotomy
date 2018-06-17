@@ -5,21 +5,9 @@
  */
 package smapling;
 
-import java.awt.print.Book;
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
-import net.sourceforge.barbecue.Barcode;
-import net.sourceforge.barbecue.BarcodeException;
-import net.sourceforge.barbecue.BarcodeFactory;
-import static smapling.Printing.fromCMToPPI;
 
 /**
  *
@@ -37,31 +25,6 @@ public class Sampling extends javax.swing.JFrame {
     
     
     
-    
-     protected static double fromCMToPPI(double cm) {
-        return toPPI(cm * 0.393700787);
-    }
-
-    protected static double toPPI(double inch) {
-        return inch * 72d;
-    }
-
-    protected static String dump(Paper paper) {
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(paper.getWidth()).append("x").append(paper.getHeight())
-                .append("/").append(paper.getImageableX()).append("x").
-                append(paper.getImageableY()).append(" - ").append(paper
-                        .getImageableWidth()).append("x").append(paper.getImageableHeight());
-        return sb.toString();
-    }
-
-    protected static String dump(PageFormat pf) {
-        Paper paper = pf.getPaper();
-        return dump(paper);
-    }
-    
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -74,9 +37,6 @@ public class Sampling extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtBillNo = new javax.swing.JTextField();
         btnPrintLabels = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtRes = new javax.swing.JTextArea();
-        btnTestPrint = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,52 +52,32 @@ public class Sampling extends javax.swing.JFrame {
             }
         });
 
-        txtRes.setColumns(20);
-        txtRes.setRows(5);
-        jScrollPane1.setViewportView(txtRes);
-
-        btnTestPrint.setText("Test");
-        btnTestPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTestPrintActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(48, 48, 48)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                                    .addComponent(txtBillNo, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                        .addGap(171, 171, 171)
+                        .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnTestPrint)))
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                        .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(55, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(44, 44, 44)
+                .addContainerGap(165, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addComponent(btnTestPrint)
-                .addGap(16, 16, 16))
+                .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(76, 76, 76))
         );
 
         pack();
@@ -153,45 +93,8 @@ public class Sampling extends javax.swing.JFrame {
         m.put("username", Prefs.getUsername());
         m.put("password", Prefs.getPassword());
         String res = Prefs.executePost(Prefs.getUrlValue() + "//faces//requests//samplebill.xhtml", m);
-
-        txtRes.setText(res);
+        JOptionPane.showMessageDialog(null, res);
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
-
-    private void btnTestPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestPrintActionPerformed
-
-        Barcode b = null;
-        try {
-            b = BarcodeFactory.createCode128("123456789012");
-            b.setResolution(72);
-        } catch (BarcodeException ex) {
-            Logger.getLogger(Printing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        if (pj.printDialog()) {
-            PageFormat pf = pj.defaultPage();
-            Paper paper = pf.getPaper();    
-            double width = fromCMToPPI(6);
-            double height = fromCMToPPI(2.4);    
-            paper.setSize(width, height);
-            paper.setImageableArea(0,0, width , height);                
-            System.out.println("Before- " + dump(paper));    
-            pf.setOrientation(PageFormat.PORTRAIT);
-            pf.setPaper(paper);    
-            System.out.println("After- " + dump(paper));
-            System.out.println("After- " + dump(pf));                
-            dump(pf);    
-            PageFormat validatePage = pj.validatePage(pf);
-            System.out.println("Valid- " + dump(validatePage));                
-            pj.setPrintable(new MyPrintable1(), pf);
-            try {
-                pj.print();
-            } catch (PrinterException ex) {
-                ex.printStackTrace();
-            }    
-        }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnTestPrintActionPerformed
 
     /**
      * @param args the command line arguments
@@ -230,10 +133,7 @@ public class Sampling extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPrintLabels;
-    private javax.swing.JButton btnTestPrint;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtBillNo;
-    private javax.swing.JTextArea txtRes;
     // End of variables declaration//GEN-END:variables
 }

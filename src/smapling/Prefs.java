@@ -9,11 +9,9 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,7 @@ import java.util.regex.Pattern;
 public class Prefs {
 
     private static final String URL = "url";
-    private static final String PRINTER = "url";
+    private static final String PRINTER = "printer";
     
     private static String urlValue = "";
     private static String username;
@@ -44,15 +42,19 @@ public class Prefs {
     private static String printer;
 
     public static void loadPrefs() {
+        System.out.println("load prefs");
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         urlValue = prefs.get(URL, urlValue);
         printer = prefs.get(PRINTER, printer);
+        System.out.println("urlValue = " + urlValue);
     }
 
     public static void savePrefs() {
+        System.out.println("save prefs");
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
-        prefs.put(URL, urlValue);
-        prefs.put(PRINTER, printer);
+        prefs.put(URL, getUrlValue());
+        prefs.put(PRINTER, getPrinter());
+         System.out.println("urlValue = " + urlValue);
     }
 
     public static void getDataFromResponse(String response) {
@@ -166,7 +168,6 @@ public class Prefs {
             rd.close();
             return response.toString();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         } finally {
             if (connection != null) {
@@ -176,6 +177,9 @@ public class Prefs {
     }
 
     public static String getUrlValue() {
+        if(urlValue==null){
+            urlValue = "";
+        }
         return urlValue;
     }
 
@@ -256,6 +260,9 @@ public class Prefs {
     }
 
     public static String getPrinter() {
+        if(printer==null){
+            printer = "";
+        }
         return printer;
     }
 
