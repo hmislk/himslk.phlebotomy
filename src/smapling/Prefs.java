@@ -46,7 +46,6 @@ public class Prefs {
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         urlValue = prefs.get(URL, urlValue);
         printer = prefs.get(PRINTER, printer);
-        System.out.println("urlValue = " + urlValue);
     }
 
     public static void savePrefs() {
@@ -54,7 +53,6 @@ public class Prefs {
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         prefs.put(URL, getUrlValue());
         prefs.put(PRINTER, getPrinter());
-         System.out.println("urlValue = " + urlValue);
     }
 
     public static void getDataFromResponse(String response) {
@@ -71,11 +69,9 @@ public class Prefs {
 
                 if (block.contains("|")) {
                     String[] blockParts = block.split("\\|");
-                    System.out.println("blockParts = " + blockParts);
                     for (int i = 0; i < blockParts.length; i++) {
                         System.out.println("blockParts[i] = " + blockParts[i]);
                         String[] parameterValueSet = blockParts[i].split("=");
-                        System.out.println("parameterValueSet.length = " + parameterValueSet.length);
                         if (parameterValueSet.length == 2) {
                             String para = parameterValueSet[0];
                             String paraVal = parameterValueSet[1];

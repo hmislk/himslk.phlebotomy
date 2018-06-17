@@ -5,20 +5,14 @@
  */
 package smapling;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
-import java.util.List;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.print.attribute.PrintServiceAttribute;
-import javax.print.attribute.standard.PrinterName;
 
 
 import java.awt.print.PrinterJob;
@@ -34,7 +28,6 @@ import javax.print.event.PrintJobAdapter;
 import javax.print.event.PrintJobEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 
 /**
  *
@@ -247,7 +240,6 @@ public class PrinterSettings extends javax.swing.JFrame {
                 void allDone() {
                     synchronized (PrintJobWatcher.this) {
                         done = true;
-                        System.out.println("Printing done ...");
                         PrintJobWatcher.this.notify();
                     }
                 }
