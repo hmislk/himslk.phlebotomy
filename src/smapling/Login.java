@@ -151,6 +151,7 @@ public class Login extends javax.swing.JFrame {
         Map m = new HashMap();
         m.put("username", txtUsername.getText());
         m.put("password", txtPassword.getText());
+        Prefs.setPassword(txtPassword.getText());
         String res = Prefs.executePost(Prefs.getUrlValue() + "//faces//requests//login.xhtml", m);
 //        txtRes.setText(res);
         Prefs.getDataFromResponse(res);
@@ -158,6 +159,7 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Logged Successfully", "Login Successful", JOptionPane.INFORMATION_MESSAGE);
             Sampling sampling = new Sampling();
             sampling.setVisible(true);
+            sampling.setLocationRelativeTo(null);
             this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             this.setVisible(false);
         } else {
@@ -186,6 +188,7 @@ public class Login extends javax.swing.JFrame {
         PrinterSettings ps = new PrinterSettings();
         ps.setVisible(true);
         ps.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        ps.setLocationRelativeTo(null);
 //        this.setVisible(false);
     }//GEN-LAST:event_btnPrinterSettingsActionPerformed
 

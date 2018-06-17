@@ -37,6 +37,8 @@ public class Sampling extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtBillNo = new javax.swing.JTextField();
         btnPrintLabels = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtRes = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -52,32 +54,39 @@ public class Sampling extends javax.swing.JFrame {
             }
         });
 
+        txtRes.setColumns(20);
+        txtRes.setRows(5);
+        jScrollPane1.setViewportView(txtRes);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(171, 171, 171)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
+                        .addGap(34, 34, 34)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                         .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addGap(36, 36, 36))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(165, Short.MAX_VALUE)
+                .addGap(72, 72, 72)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -92,8 +101,11 @@ public class Sampling extends javax.swing.JFrame {
         m.put("billNo", txtBillNo.getText());
         m.put("username", Prefs.getUsername());
         m.put("password", Prefs.getPassword());
+        System.out.println("Prefs.getPassword() = " + Prefs.getPassword());
+        System.out.println("Prefs.getUsername() = " + Prefs.getUsername());
+        System.out.println("txtBillNo.getText() = " + txtBillNo.getText());
         String res = Prefs.executePost(Prefs.getUrlValue() + "//faces//requests//samplebill.xhtml", m);
-        JOptionPane.showMessageDialog(null, res);
+        txtRes.setText(res);
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
 
     /**
@@ -134,6 +146,8 @@ public class Sampling extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPrintLabels;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtBillNo;
+    private javax.swing.JTextArea txtRes;
     // End of variables declaration//GEN-END:variables
 }
