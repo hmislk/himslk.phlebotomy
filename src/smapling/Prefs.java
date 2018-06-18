@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.prefs.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,7 +29,7 @@ public class Prefs {
 
     private static final String URL = "url";
     private static final String PRINTER = "printer";
-    
+
     private static String urlValue = "";
     private static String username;
     private static String password;
@@ -40,6 +41,9 @@ public class Prefs {
     private static Long usersId;
     private static boolean login;
     private static String printer;
+
+    static boolean succes = false;
+    static String message = "";
 
     public static void loadPrefs() {
         System.out.println("load prefs");
@@ -112,6 +116,94 @@ public class Prefs {
         }
     }
 
+    public static void getMessageFromResponse(String response) {
+        JOptionPane.showMessageDialog(null, response);
+        String patternStart = "#{";
+        String patternEnd = "}#";
+        int startIndex = response.indexOf(patternStart);
+        System.out.println("startIndex = " + startIndex);
+        int endIndex = response.indexOf(patternEnd);
+        System.out.println("endIndex = " + endIndex);
+        String temStr = response.substring(startIndex + patternStart.length(), (endIndex));
+        JOptionPane.showMessageDialog(null, temStr);
+
+        if (temStr.contains("|")) {
+            String[] blockParts = temStr.split("\\|");
+            for (int i = 0; i < blockParts.length; i++) {
+                System.out.println("blockParts[i] = " + blockParts[i]);
+                String[] parameterValueSet = blockParts[i].split("=");
+                if (parameterValueSet.length == 2) {
+
+                    String para = parameterValueSet[0];
+                    String paraVal = parameterValueSet[1];
+
+                    switch (para) {
+                        case "Login":
+                            if (paraVal.equals("1")) {
+                                succes = true;
+                            } else if (paraVal.equals("0")) {
+                                succes = false;
+                                return;
+                            }
+                            break;
+                        case "message":
+                            message = paraVal;
+                            break;
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    public static void getMessageFromResponseOld(String response) {
+        String patternStart = "#{";
+        String patternEnd = "}#";
+        String regexString = Pattern.quote(patternStart) + "(.*?)" + Pattern.quote(patternEnd);
+        String text = response;
+        Pattern p = Pattern.compile(regexString);
+        Matcher m = p.matcher(text);
+        int c = 0;
+        while (m.find()) {
+            String block = m.group(c);
+            c++;
+            JOptionPane.showMessageDialog(null, block);
+            if (!block.trim().equals("")) {
+                if (block.contains("|")) {
+                    String[] blockParts = block.split("\\|");
+                    for (int i = 0; i < blockParts.length; i++) {
+                        System.out.println("blockParts[i] = " + blockParts[i]);
+                        String[] parameterValueSet = blockParts[i].split("=");
+                        if (parameterValueSet.length == 2) {
+
+                            String para = parameterValueSet[0];
+                            String paraVal = parameterValueSet[1];
+
+                            JOptionPane.showMessageDialog(null, para);
+                            JOptionPane.showMessageDialog(null, paraVal);
+                            switch (para) {
+                                case "Login":
+                                    if (paraVal.equals("1")) {
+                                        succes = true;
+                                    } else if (paraVal.equals("0")) {
+                                        succes = false;
+                                        return;
+                                    }
+                                    break;
+                                case "message":
+                                    message = paraVal;
+                                    break;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
+
     public static Long stringToLong(String str) {
         try {
             Long n = Long.parseLong(str);
@@ -137,7 +229,7 @@ public class Prefs {
         if (parameters != null && !parameters.isEmpty()) {
             targetURL += "last=true";
         }
-        
+        System.out.println("targetURL = " + targetURL);
         try {
             //Create connection
             URL url = new URL(targetURL);
@@ -173,7 +265,7 @@ public class Prefs {
     }
 
     public static String getUrlValue() {
-        if(urlValue==null){
+        if (urlValue == null) {
             urlValue = "";
         }
         return urlValue;
@@ -256,7 +348,7 @@ public class Prefs {
     }
 
     public static String getPrinter() {
-        if(printer==null){
+        if (printer == null) {
             printer = "";
         }
         return printer;
@@ -266,7 +358,4 @@ public class Prefs {
         printer = aPrinter;
     }
 
-    
-    
-    
 }

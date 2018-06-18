@@ -5,8 +5,28 @@
  */
 package smapling;
 
+import java.awt.print.PrinterJob;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,9 +43,6 @@ public class Sampling extends javax.swing.JFrame {
         this.getRootPane().setDefaultButton(btnPrintLabels);
     }
 
-    
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -105,9 +122,64 @@ public class Sampling extends javax.swing.JFrame {
         System.out.println("Prefs.getPassword() = " + Prefs.getPassword());
         System.out.println("Prefs.getUsername() = " + Prefs.getUsername());
         System.out.println("txtBillNo.getText() = " + txtBillNo.getText());
-        String res = Prefs.executePost(Prefs.getUrlValue() + "//faces//requests//samplebill.xhtml", m);
+        String res = Prefs.executePost(Prefs.getUrlValue() + "faces/requests/samplebill.xhtml", m);
         txtRes.setText(res);
+        Prefs.getMessageFromResponse(res);
+        if (!Prefs.succes) {
+            JOptionPane.showMessageDialog(null, "Error", Prefs.message, JOptionPane.ERROR_MESSAGE);
+        }else{
+            printZpl(Prefs.message);
+        }
+        
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
+
+    public void printZpl(String commands) {
+        String printerName = Prefs.getPrinter().toLowerCase();
+        PrintService service = null;
+        // Get array of all print services
+        PrintService[] services = PrinterJob.lookupPrintServices();
+
+        // Retrieve a print service from the array
+        for (int index = 0; service == null && index < services.length; index++) {
+
+            if (services[index].getName().toLowerCase().indexOf(printerName) >= 0) {
+                service = services[index];
+            }
+        }
+
+        if (service != null) {
+
+            InputStream is = null;
+            try {
+                is = new ByteArrayInputStream(commands.getBytes("UTF8"));
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(PrinterSettings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+            pras.add(new Copies(1));
+
+            DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
+            Doc doc = new SimpleDoc(is, flavor, null);
+            DocPrintJob job = service.createPrintJob();
+
+            PrintJobWatcher pjw = new PrintJobWatcher(job);
+            try {
+                job.print(doc, pras);
+            } catch (PrintException ex) {
+                Logger.getLogger(PrinterSettings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            pjw.waitForDone();
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PrinterSettings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Printer NOT available", "printer Error", JOptionPane.ERROR);
+        }
+    }
 
     /**
      * @param args the command line arguments

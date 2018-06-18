@@ -151,12 +151,8 @@ public class PrinterSettings extends javax.swing.JFrame {
 
     private void btnTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestActionPerformed
         String commands = "^XA\n\r^MNM\n\r^FO050,50\n\r^B8N,100,Y,N\n\r^FD1234567\n\r^FS\n\r^PQ3\n\r^XZ";
-        PrintService[] printServices = PrinterJob.lookupPrintServices();
-
         String printerName = lstPrinters.getSelectedValue().toString().toLowerCase();
-
         PrintService service = null;
-
         // Get array of all print services
         PrintService[] services = PrinterJob.lookupPrintServices();
 
@@ -212,50 +208,7 @@ public class PrinterSettings extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 
-    class PrintJobWatcher {
-
-        boolean done = false;
-
-        PrintJobWatcher(DocPrintJob job) {
-            job.addPrintJobListener(new PrintJobAdapter() {
-                @Override
-                public void printJobCanceled(PrintJobEvent pje) {
-                    allDone();
-                }
-
-                @Override
-                public void printJobCompleted(PrintJobEvent pje) {
-                    allDone();
-                }
-
-                @Override
-                public void printJobFailed(PrintJobEvent pje) {
-                    allDone();
-                }
-
-                @Override
-                public void printJobNoMoreEvents(PrintJobEvent pje) {
-                    allDone();
-                }
-
-                void allDone() {
-                    synchronized (PrintJobWatcher.this) {
-                        done = true;
-                        PrintJobWatcher.this.notify();
-                    }
-                }
-            });
-        }
-
-        public synchronized void waitForDone() {
-            try {
-                while (!done) {
-                    wait();
-                }
-            } catch (InterruptedException e) {
-            }
-        }
-    }
+    
 
     /**
      * @param args the command line arguments
