@@ -117,7 +117,7 @@ public class Prefs {
     }
 
     public static void getMessageFromResponse(String response) {
-        JOptionPane.showMessageDialog(null, response);
+//        JOptionPane.showMessageDialog(null, response);
         String patternStart = "#{";
         String patternEnd = "}#";
         int startIndex = response.indexOf(patternStart);
@@ -125,7 +125,7 @@ public class Prefs {
         int endIndex = response.indexOf(patternEnd);
         System.out.println("endIndex = " + endIndex);
         String temStr = response.substring(startIndex + patternStart.length(), (endIndex));
-        JOptionPane.showMessageDialog(null, temStr);
+//        JOptionPane.showMessageDialog(null, temStr);
 
         if (temStr.contains("|")) {
             String[] blockParts = temStr.split("\\|");
@@ -168,7 +168,7 @@ public class Prefs {
         while (m.find()) {
             String block = m.group(c);
             c++;
-            JOptionPane.showMessageDialog(null, block);
+//            JOptionPane.showMessageDialog(null, block);
             if (!block.trim().equals("")) {
                 if (block.contains("|")) {
                     String[] blockParts = block.split("\\|");
@@ -180,8 +180,8 @@ public class Prefs {
                             String para = parameterValueSet[0];
                             String paraVal = parameterValueSet[1];
 
-                            JOptionPane.showMessageDialog(null, para);
-                            JOptionPane.showMessageDialog(null, paraVal);
+//                            JOptionPane.showMessageDialog(null, para);
+//                            JOptionPane.showMessageDialog(null, paraVal);
                             switch (para) {
                                 case "Login":
                                     if (paraVal.equals("1")) {
