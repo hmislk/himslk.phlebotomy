@@ -29,6 +29,7 @@ public class Prefs {
 
     private static final String URL = "url";
     private static final String PRINTER = "printer";
+    private static final String PRINTER_COMMAND_SAMPLE = "printeCommandSample";
 
     private static String urlValue = "";
     private static String username;
@@ -41,15 +42,17 @@ public class Prefs {
     private static Long usersId;
     private static boolean login;
     private static String printer;
+    private static String printSample;
 
-    static boolean succes = false;
-    static String message = "";
+    private static boolean succes = false;
+    private static String message = "";
 
     public static void loadPrefs() {
         System.out.println("load prefs");
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         urlValue = prefs.get(URL, urlValue);
         printer = prefs.get(PRINTER, printer);
+        printSample = prefs.get(PRINTER_COMMAND_SAMPLE, printSample);
     }
 
     public static void savePrefs() {
@@ -57,6 +60,7 @@ public class Prefs {
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         prefs.put(URL, getUrlValue());
         prefs.put(PRINTER, getPrinter());
+        prefs.put(PRINTER_COMMAND_SAMPLE, printSample);
     }
 
     public static void getDataFromResponse(String response) {
@@ -358,4 +362,30 @@ public class Prefs {
         printer = aPrinter;
     }
 
+    public static boolean isSucces() {
+        return succes;
+    }
+
+    public static void setSucces(boolean aSucces) {
+        succes = aSucces;
+    }
+
+    public static String getMessage() {
+        return message;
+    }
+
+    public static void setMessage(String aMessage) {
+        message = aMessage;
+    }
+
+    public static String getPrintSample() {
+        return printSample;
+    }
+
+    public static void setPrintSample(String aPrintSample) {
+        printSample = aPrintSample;
+    }
+
+    
+    
 }

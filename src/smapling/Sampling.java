@@ -138,10 +138,10 @@ public class Sampling extends javax.swing.JFrame {
         String res = Prefs.executePost(Prefs.getUrlValue() + "faces/requests/samplebill.xhtml", m);
         txtRes.setText(res);
         Prefs.getMessageFromResponse(res);
-        if (!Prefs.succes) {
-            JOptionPane.showMessageDialog(null, "Error", Prefs.message, JOptionPane.ERROR_MESSAGE);
+        if (!Prefs.isSucces()) {
+            JOptionPane.showMessageDialog(null, "Error", Prefs.getMessage(), JOptionPane.ERROR_MESSAGE);
         }else{
-            printZpl(Prefs.message);
+            printZpl(Prefs.getMessage());
         }
         
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
