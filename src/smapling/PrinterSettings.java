@@ -58,6 +58,7 @@ public class PrinterSettings extends javax.swing.JFrame {
         btnClose = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtPrintSample = new javax.swing.JTextArea();
+        btnSaveTemplate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -101,6 +102,13 @@ public class PrinterSettings extends javax.swing.JFrame {
         txtPrintSample.setRows(5);
         jScrollPane2.setViewportView(txtPrintSample);
 
+        btnSaveTemplate.setText("Save Template");
+        btnSaveTemplate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveTemplateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -122,6 +130,8 @@ public class PrinterSettings extends javax.swing.JFrame {
                         .addGap(65, 65, 65)
                         .addComponent(btnSelectPrinter, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSaveTemplate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnTest)))
                 .addContainerGap())
         );
@@ -142,7 +152,9 @@ public class PrinterSettings extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnTest)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnTest)
+                            .addComponent(btnSaveTemplate))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
@@ -168,11 +180,7 @@ public class PrinterSettings extends javax.swing.JFrame {
 
     private void btnTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestActionPerformed
         String commands;
-        if (txtPrintSample.getText().trim().equals("")) {
-            commands = "^XA\n\r^MNM\n\r^FO050,50\n\r^B8N,100,Y,N\n\r^FD1234567\n\r^FS\n\r^PQ3\n\r^XZ";
-        } else {
-            commands = txtPrintSample.getText();
-        }
+        commands = txtPrintSample.getText();
         Prefs.setPrintSample(commands);
         Prefs.savePrefs();
         String printerName = lstPrinters.getSelectedValue().toString().toLowerCase();
@@ -232,6 +240,14 @@ public class PrinterSettings extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void btnSaveTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveTemplateActionPerformed
+        String commands;
+        commands = txtPrintSample.getText();
+        Prefs.setPrintSample(commands);
+        Prefs.savePrefs();
+        JOptionPane.showMessageDialog(null, "Saved");
+    }//GEN-LAST:event_btnSaveTemplateActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -269,6 +285,7 @@ public class PrinterSettings extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnSaveTemplate;
     private javax.swing.JButton btnSelectPrinter;
     private javax.swing.JButton btnTest;
     private javax.swing.JLabel jLabel1;

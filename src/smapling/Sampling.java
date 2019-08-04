@@ -10,14 +10,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -28,6 +24,14 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JOptionPane;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -123,27 +127,84 @@ public class Sampling extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public String sendRestfulRequest(String url) {
+        String output = "";
+        try {
+
+            Client client = Client.create();
+
+            WebResource webResource = client
+                    .resource(url);
+
+            ClientResponse response = webResource.accept("application/json")
+                    .get(ClientResponse.class);
+
+            if (response.getStatus() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + response.getStatus());
+            }
+
+            output = response.getEntity(String.class);
+
+            return output;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+        return "";
+    }
+
+    public String parseJsonAndGeneratePrintCommand(String json, String template) {
+        /**
+         * https://www.testingexcellence.com/how-to-parse-json-in-java/
+         */
+        String cmd = "";
+        try {
+            JSONObject obj = new JSONObject(json);
+            JSONArray arr = obj.getJSONArray("Barcodes");
+            for (int i = 0; i < arr.length(); i++) {
+                String t = template;
+                String name = arr.getJSONObject(i).getString("name");
+                String insId = arr.getJSONObject(i).getString("insid");
+                String tests = arr.getJSONObject(i).getString("tests");
+                String barcode = arr.getJSONObject(i).getString("barcode");
+                t = t.replace("[name]", name);
+                t = t.replace("[insid]", insId);
+                t = t.replace("[tests]", tests);
+                t = t.replace("[barcode]", barcode);
+                cmd+=t;
+            }
+        } catch (JSONException ex) {
+            Logger.getLogger(RestfulTest.class.getName()).log(Level.SEVERE, null, ex);
+            return cmd;
+        }
+        return cmd;
+    }
+
     private void btnPrintLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintLabelsActionPerformed
         if (txtBillNo.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(null, "Enter the Bill No", "Error", JOptionPane.ERROR_MESSAGE);
             txtBillNo.requestFocus();
         }
-        Map m = new HashMap();
-        m.put("billNo", txtBillNo.getText());
-        m.put("username", Prefs.getUsername());
-        m.put("password", Prefs.getPassword());
-        System.out.println("Prefs.getPassword() = " + Prefs.getPassword());
-        System.out.println("Prefs.getUsername() = " + Prefs.getUsername());
-        System.out.println("txtBillNo.getText() = " + txtBillNo.getText());
-        String res = Prefs.executePost(Prefs.getUrlValue() + "faces/requests/samplebill.xhtml", m);
-        txtRes.setText(res);
-        Prefs.getMessageFromResponse(res);
+        String url = Prefs.getUrlValue() + "api/lims/samples/[SampleId]/[UserName]/[Password]";
+        url = url.replace("[SampleId]", txtBillNo.getText());
+        url = url.replace("[UserName]", Prefs.getUsername());
+        url = url.replace("[Password]", Prefs.getPassword());
+
+        String res = sendRestfulRequest(url);
+
+        String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
+
+        txtRes.setText(printCmd);
+     
         if (!Prefs.isSucces()) {
             JOptionPane.showMessageDialog(null, "Error", Prefs.getMessage(), JOptionPane.ERROR_MESSAGE);
-        }else{
-            printZpl(Prefs.getMessage());
+        } else {
+            printZpl(printCmd);
         }
-        
+
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
 
     public void printZpl(String commands) {
