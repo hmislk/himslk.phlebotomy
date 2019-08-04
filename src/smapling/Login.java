@@ -5,9 +5,17 @@
  */
 package smapling;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -40,7 +48,6 @@ public class Login extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         btnPrinterSettings = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        btnRestful = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sampling");
@@ -84,13 +91,6 @@ public class Login extends javax.swing.JFrame {
 
         jLabel4.setText("Example of a URL is http://35.185.185.235:8080/arogya/");
 
-        btnRestful.setText("Restful");
-        btnRestful.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRestfulActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,22 +110,17 @@ public class Login extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnLog)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(28, 28, 28)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                                    .addComponent(txtUsername))))
-                        .addGap(196, 196, 196))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnRestful)
-                        .addGap(57, 57, 57))))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnLog)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                            .addComponent(txtUsername))))
+                .addGap(196, 196, 196))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,9 +135,7 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLog)
-                .addGap(93, 93, 93)
-                .addComponent(btnRestful)
-                .addGap(18, 18, 18)
+                .addGap(134, 134, 134)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
@@ -174,26 +167,31 @@ public class Login extends javax.swing.JFrame {
             txtUrl.requestFocus();
         }
         Prefs.setUrlValue(txtUrl.getText());
+        Prefs.setUsername(txtUsername.getText());
+        Prefs.setPassword(txtPassword.getText());
         Prefs.savePrefs();
         Map m = new HashMap();
         m.put("username", txtUsername.getText());
         m.put("password", txtPassword.getText());
-        Prefs.setPassword(txtPassword.getText());
-        String res = Prefs.executePost(Prefs.getUrlValue() + "faces/requests/login.xhtml", m);
-//        txtRes.setText(res);
-        if(res==null){
-            JOptionPane.showMessageDialog(null, "System is down or internet is not available.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        Prefs.getDataFromResponse(res);
-        if (Prefs.isLogin()) {
+
+        String url = Prefs.getUrlValue() + "api/lims/samples/login/[UserName]/[Password]";
+        url = url.replace("[UserName]", Prefs.getUsername());
+        url = url.replace("[Password]", Prefs.getPassword());
+
+        System.out.println("url = " + url);
+        
+        String res = sendRestfulRequest(url);
+        boolean loginSuccess = parseJsonAndReportLoginStatus(res);
+
+        if (!loginSuccess) {
+            JOptionPane.showMessageDialog(null, "System is down or internet is not available or Wrong Username & Password.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
             JOptionPane.showMessageDialog(null, "Logged Successfully", "Login Successful", JOptionPane.INFORMATION_MESSAGE);
             Sampling sampling = new Sampling();
             sampling.setVisible(true);
             sampling.setLocationRelativeTo(null);
             this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             this.setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(null, "Wrong Login Details. Please retry", "Login Failure", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnLogActionPerformed
 
@@ -222,10 +220,49 @@ public class Login extends javax.swing.JFrame {
 //        this.setVisible(false);
     }//GEN-LAST:event_btnPrinterSettingsActionPerformed
 
-    private void btnRestfulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestfulActionPerformed
-        RestfulTest r = new RestfulTest();
-        r.setVisible(true);
-    }//GEN-LAST:event_btnRestfulActionPerformed
+    public String sendRestfulRequest(String url) {
+        String output = "";
+        try {
+
+            Client client = Client.create();
+
+            WebResource webResource = client
+                    .resource(url);
+
+            ClientResponse response = webResource.accept("application/json")
+                    .get(ClientResponse.class);
+
+            if (response.getStatus() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + response.getStatus());
+            }
+
+            output = response.getEntity(String.class);
+
+            return output;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+        return "";
+    }
+
+    public boolean parseJsonAndReportLoginStatus(String json) {
+        try {
+            JSONObject userObject = new JSONObject(json);
+            String result = userObject.getString("result");
+            if (result.equals("error")) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -266,7 +303,6 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLog;
     private javax.swing.JButton btnPrinterSettings;
-    private javax.swing.JButton btnRestful;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

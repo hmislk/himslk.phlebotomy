@@ -174,10 +174,10 @@ public class Sampling extends javax.swing.JFrame {
                 t = t.replace("[insid]", insId);
                 t = t.replace("[tests]", tests);
                 t = t.replace("[barcode]", barcode);
-                cmd+=t;
+                cmd += t;
             }
         } catch (JSONException ex) {
-            Logger.getLogger(RestfulTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Sampling.class.getName()).log(Level.SEVERE, null, ex);
             return cmd;
         }
         return cmd;
@@ -194,17 +194,9 @@ public class Sampling extends javax.swing.JFrame {
         url = url.replace("[Password]", Prefs.getPassword());
 
         String res = sendRestfulRequest(url);
-
         String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
-
         txtRes.setText(printCmd);
-     
-        if (!Prefs.isSucces()) {
-            JOptionPane.showMessageDialog(null, "Error", Prefs.getMessage(), JOptionPane.ERROR_MESSAGE);
-        } else {
-            printZpl(printCmd);
-        }
-
+        printZpl(printCmd);
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
 
     public void printZpl(String commands) {
