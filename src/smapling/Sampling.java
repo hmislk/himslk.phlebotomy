@@ -60,10 +60,17 @@ public class Sampling extends javax.swing.JFrame {
         txtBillNo = new javax.swing.JTextField();
         btnPrintLabels = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtRes = new javax.swing.JTextArea();
+        txtLog = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        btnClear = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         lblBillNo.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
 
@@ -76,52 +83,66 @@ public class Sampling extends javax.swing.JFrame {
             }
         });
 
-        txtRes.setColumns(20);
-        txtRes.setRows(5);
-        jScrollPane1.setViewportView(txtRes);
+        txtLog.setColumns(20);
+        txtLog.setRows(5);
+        jScrollPane1.setViewportView(txtLog);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel2.setText("Bill No");
+
+        jLabel1.setText("Log");
+
+        btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 190, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblBillNo)
-                                .addGap(198, 198, 198)
-                                .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(36, 36, 36))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(44, 44, 44)
-                    .addComponent(jLabel2)
-                    .addContainerGap(503, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lblBillNo)
+                        .addGap(457, 457, 457))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnClear)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(72, 72, 72)
-                .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBillNo))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(85, 85, 85)
                     .addComponent(jLabel2)
-                    .addContainerGap(268, Short.MAX_VALUE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtBillNo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(btnPrintLabels, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblBillNo)
+                    .addComponent(jLabel1)
+                    .addComponent(btnClear))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -186,18 +207,31 @@ public class Sampling extends javax.swing.JFrame {
     private void btnPrintLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintLabelsActionPerformed
         if (txtBillNo.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(null, "Enter the Bill No", "Error", JOptionPane.ERROR_MESSAGE);
+            txtLog.setText(txtLog.getText() + "\nBill Number Entered is Empty ");
             txtBillNo.requestFocus();
         }
+        txtLog.setText(txtLog.getText() + "\nBill Number Entered = " + txtBillNo.getText());
         String url = Prefs.getUrlValue() + "api/lims/samples/[SampleId]/[UserName]/[Password]";
         url = url.replace("[SampleId]", txtBillNo.getText());
         url = url.replace("[UserName]", Prefs.getUsername());
         url = url.replace("[Password]", Prefs.getPassword());
-
+        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
         String res = sendRestfulRequest(url);
+        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
         String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
-        txtRes.setText(printCmd);
+        txtLog.setText(txtLog.getText() + "\nPrint Command = " + printCmd);
         printZpl(printCmd);
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        this.getRootPane().setDefaultButton(btnPrintLabels);
+    }//GEN-LAST:event_formWindowOpened
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+        txtLog.setText("");
+    }//GEN-LAST:event_btnClearActionPerformed
 
     public void printZpl(String commands) {
         String printerName = Prefs.getPrinter().toLowerCase();
@@ -284,11 +318,13 @@ public class Sampling extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnPrintLabels;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBillNo;
     private javax.swing.JTextField txtBillNo;
-    private javax.swing.JTextArea txtRes;
+    private javax.swing.JTextArea txtLog;
     // End of variables declaration//GEN-END:variables
 }
