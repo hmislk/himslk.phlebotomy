@@ -192,8 +192,8 @@ public class StickerPrinter extends javax.swing.JFrame {
     }
 
     private String parseJsonObjectAndReplaceInTemplate(JSONObject jsonObject, String template) {
-        System.out.println("template = " + template);
-        System.out.println("jsonObject = " + jsonObject);
+//        System.out.println("template = " + template);
+//        System.out.println("template = " + template);
         String t = new String(template);
         try {
             String name = jsonObject.getString("name");
@@ -231,9 +231,9 @@ public class StickerPrinter extends javax.swing.JFrame {
         url = url.replace("[SampleId]", txtBillNo.getText());
         url = url.replace("[UserName]", Prefs.getUsername());
         url = url.replace("[Password]", Prefs.getPassword());
-        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
+//        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
         String res = sendRestfulRequest(url);
-        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
+//        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
         String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
         txtLog.setText(txtLog.getText() + "\nPrint Command = " + printCmd);
         printZpl(printCmd);
