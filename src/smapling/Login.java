@@ -24,7 +24,7 @@ import org.json.JSONObject;
 public class Login extends javax.swing.JFrame {
 
     /**
-     * Creates new form Sampling
+     * Creates new form StickerPrinter
      */
     public Login() {
         initComponents();
@@ -187,7 +187,7 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "System is down or internet is not available or Wrong Username & Password.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Logged Successfully", "Login Successful", JOptionPane.INFORMATION_MESSAGE);
-            Sampling sampling = new Sampling();
+            StickerPrinter sampling = new StickerPrinter();
             sampling.setVisible(true);
             sampling.setLocationRelativeTo(null);
             this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

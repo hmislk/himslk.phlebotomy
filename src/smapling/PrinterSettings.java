@@ -59,6 +59,7 @@ public class PrinterSettings extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtPrintSample = new javax.swing.JTextArea();
         btnSaveTemplate = new javax.swing.JButton();
+        btnAddSampleCode = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -109,6 +110,13 @@ public class PrinterSettings extends javax.swing.JFrame {
             }
         });
 
+        btnAddSampleCode.setText("Add Sample Code");
+        btnAddSampleCode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddSampleCodeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -125,13 +133,15 @@ public class PrinterSettings extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnClose))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(65, 65, 65)
                         .addComponent(btnSelectPrinter, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSaveTemplate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAddSampleCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSaveTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnTest)))
                 .addContainerGap())
         );
@@ -154,7 +164,8 @@ public class PrinterSettings extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnTest)
-                            .addComponent(btnSaveTemplate))
+                            .addComponent(btnSaveTemplate)
+                            .addComponent(btnAddSampleCode))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
@@ -248,6 +259,18 @@ public class PrinterSettings extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Saved");
     }//GEN-LAST:event_btnSaveTemplateActionPerformed
 
+    private void btnAddSampleCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSampleCodeActionPerformed
+        String zplCode = "^XA\n"
+                + "LH0,0\n"
+                + "^FO30,20,^ADN,18,10^FD#[name], #[sex], #[age]^FS\n"
+                + "^LH0,30\n"
+                + "^FO30,10,^BCN,100,Y,N,N^FD#[barcode]^FS\n"
+                + "^LH0,155\n"
+                + "^FO30,20,^ADN,18,10^FD#[tests], #[insId], #[deptId], #[tube]^FS\n"
+                + "^XZ\n";
+        txtPrintSample.setText(zplCode);
+    }//GEN-LAST:event_btnAddSampleCodeActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -284,6 +307,7 @@ public class PrinterSettings extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddSampleCode;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnSaveTemplate;
     private javax.swing.JButton btnSelectPrinter;

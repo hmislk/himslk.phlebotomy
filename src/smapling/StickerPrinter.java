@@ -7,13 +7,8 @@ package smapling;
 
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -24,25 +19,28 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.swing.JOptionPane;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  *
  * @author buddh
  */
-public class Sampling extends javax.swing.JFrame {
+public class StickerPrinter extends javax.swing.JFrame {
 
     /**
      * Creates new form Sampling
      */
-    public Sampling() {
+    public StickerPrinter() {
         initComponents();
         this.getRootPane().setDefaultButton(btnPrintLabels);
     }
@@ -149,60 +147,78 @@ public class Sampling extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public String sendRestfulRequest(String url) {
-        String output = "";
         try {
+            URL requestUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
+            connection.setRequestMethod("GET");
 
-            Client client = Client.create();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
 
-            WebResource webResource = client
-                    .resource(url);
-
-            ClientResponse response = webResource.accept("application/json")
-                    .get(ClientResponse.class);
-
-            if (response.getStatus() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatus());
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
+            in.close();
 
-            output = response.getEntity(String.class);
+            connection.disconnect();
 
-            return output;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
+            return response.toString();
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Malformed URL: " + url, ex);
+            return null;
+        } catch (IOException ex) {
+            Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Failed to send RESTful request to URL: " + url, ex);
+            return null;
         }
-        return "";
     }
 
     public String parseJsonAndGeneratePrintCommand(String json, String template) {
-        /**
-         * https://www.testingexcellence.com/how-to-parse-json-in-java/
-         */
-        String cmd = "";
+        System.out.println("template = " + template);
+        System.out.println("json = " + json);
+        StringBuilder cmd = new StringBuilder();
+
         try {
             JSONObject obj = new JSONObject(json);
             JSONArray arr = obj.getJSONArray("Barcodes");
             for (int i = 0; i < arr.length(); i++) {
-                String t = template;
-                String name = arr.getJSONObject(i).getString("name");
-                String insId = arr.getJSONObject(i).getString("insid");
-                String tests = arr.getJSONObject(i).getString("tests");
-                String barcode = arr.getJSONObject(i).getString("barcode");
-                t = t.replace("[name]", name);
-                t = t.replace("[insid]", insId);
-                t = t.replace("[tests]", tests);
-                t = t.replace("[barcode]", barcode);
-                cmd += t;
+                cmd.append(parseJsonObjectAndReplaceInTemplate(arr.getJSONObject(i), template));
             }
         } catch (JSONException ex) {
-            Logger.getLogger(Sampling.class.getName()).log(Level.SEVERE, null, ex);
-            return cmd;
+            Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return cmd;
+        System.out.println("cmd = " + cmd);
+        return cmd.toString();
     }
+
+    private String parseJsonObjectAndReplaceInTemplate(JSONObject jsonObject, String template) {
+        System.out.println("template = " + template);
+        System.out.println("jsonObject = " + jsonObject);
+        String t = new String(template);
+        try {
+            String name = jsonObject.getString("name");
+            String insId = jsonObject.getString("insid");
+            String tests = jsonObject.getString("tests");
+            String barcode = jsonObject.getString("barcode");
+            String age = jsonObject.getString("age");
+            String sex = jsonObject.getString("sex");
+            String deptId = jsonObject.getString("deptid");
+            String tube = jsonObject.getString("tube");
+
+            t = t.replace("[name]", name);
+            t = t.replace("[insId]", insId);
+            t = t.replace("[tests]", tests);
+            t = t.replace("[barcode]", barcode);
+            t = t.replace("[age]", age);
+            t = t.replace("[sex]", sex);
+            t = t.replace("[deptId]", deptId);
+            t = t.replace("[tube]", tube);
+        } catch (JSONException ex) {
+            Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Error parsing JSONObject", ex);
+        }
+        return t;
+    }
+
 
     private void btnPrintLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintLabelsActionPerformed
         if (txtBillNo.getText().trim().equals("")) {
@@ -299,20 +315,23 @@ public class Sampling extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Sampling.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StickerPrinter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Sampling.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StickerPrinter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Sampling.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StickerPrinter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Sampling.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StickerPrinter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Sampling().setVisible(true);
+                new StickerPrinter().setVisible(true);
             }
         });
     }
