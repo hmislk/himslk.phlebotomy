@@ -174,8 +174,11 @@ public class StickerPrinter extends javax.swing.JFrame {
     }
 
     public String parseJsonAndGeneratePrintCommand(String json, String template) {
-        System.out.println("template = " + template);
-        System.out.println("json = " + json);
+//        txtLog.append("\n");
+//        txtLog.append("json" + json);
+//        txtLog.append("\n");
+//        txtLog.append("template" + template);
+//        txtLog.append("\n");
         StringBuilder cmd = new StringBuilder();
 
         try {
@@ -194,6 +197,9 @@ public class StickerPrinter extends javax.swing.JFrame {
     private String parseJsonObjectAndReplaceInTemplate(JSONObject jsonObject, String template) {
 //        System.out.println("template = " + template);
 //        System.out.println("template = " + template);
+//        txtLog.append("/n");
+//        txtLog.append("template = " + template);
+//        txtLog.append("jsonObject = " + jsonObject);
         String t = new String(template);
         try {
             String name = jsonObject.getString("name");
@@ -204,7 +210,8 @@ public class StickerPrinter extends javax.swing.JFrame {
             String sex = jsonObject.getString("sex");
             String deptId = jsonObject.getString("deptid");
             String tube = jsonObject.getString("tube");
-
+            String billDate = jsonObject.getString("billDate");
+            txtLog.append(billDate);
             t = t.replace("[name]", name);
             t = t.replace("[insId]", insId);
             t = t.replace("[tests]", tests);
@@ -213,6 +220,7 @@ public class StickerPrinter extends javax.swing.JFrame {
             t = t.replace("[sex]", sex);
             t = t.replace("[deptId]", deptId);
             t = t.replace("[tube]", tube);
+            t = t.replace("[billDate]", billDate);
         } catch (JSONException ex) {
             Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Error parsing JSONObject", ex);
         }
@@ -226,7 +234,7 @@ public class StickerPrinter extends javax.swing.JFrame {
             txtLog.setText(txtLog.getText() + "\nBill Number Entered is Empty ");
             txtBillNo.requestFocus();
         }
-        txtLog.setText(txtLog.getText() + "\nBill Number Entered = " + txtBillNo.getText());
+//        txtLog.setText(txtLog.getText() + "\nBill Number Entered = " + txtBillNo.getText());
         String url = Prefs.getUrlValue() + "api/lims/samples/[SampleId]/[UserName]/[Password]";
         url = url.replace("[SampleId]", txtBillNo.getText());
         url = url.replace("[UserName]", Prefs.getUsername());
