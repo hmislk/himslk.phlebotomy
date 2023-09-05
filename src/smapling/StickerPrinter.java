@@ -195,7 +195,8 @@ public class StickerPrinter extends javax.swing.JFrame {
     }
 
     private String parseJsonObjectAndReplaceInTemplate(JSONObject jsonObject, String template) {
-//        System.out.println("template = " + template);
+        System.out.println("template = " + template);
+        System.out.println("jsonObject = " + jsonObject);
 //        System.out.println("template = " + template);
 //        txtLog.append("/n");
 //        txtLog.append("template = " + template);
@@ -206,21 +207,31 @@ public class StickerPrinter extends javax.swing.JFrame {
             String insId = jsonObject.getString("insid");
             String tests = jsonObject.getString("tests");
             String barcode = jsonObject.getString("barcode");
-            String age = jsonObject.getString("age");
+//            String age = jsonObject.getString("age");
             String sex = jsonObject.getString("sex");
             String deptId = jsonObject.getString("deptid");
             String tube = jsonObject.getString("tube");
             String billDate = jsonObject.getString("billDate");
             txtLog.append(billDate);
+            System.out.println("t = " + t);
             t = t.replace("[name]", name);
+            System.out.println("t = " + t);
             t = t.replace("[insId]", insId);
+            System.out.println("t = " + t);
             t = t.replace("[tests]", tests);
+            System.out.println("t = " + t);
             t = t.replace("[barcode]", barcode);
-            t = t.replace("[age]", age);
+            System.out.println("t = " + t);
+//            t = t.replace("[age]", age);
+            System.out.println("t = " + t);
             t = t.replace("[sex]", sex);
+            System.out.println("t = " + t);
             t = t.replace("[deptId]", deptId);
+            System.out.println("t = " + t);
             t = t.replace("[tube]", tube);
+            System.out.println("t = " + t);
             t = t.replace("[billDate]", billDate);
+            System.out.println("t = " + t);
         } catch (JSONException ex) {
             Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Error parsing JSONObject", ex);
         }
@@ -239,11 +250,13 @@ public class StickerPrinter extends javax.swing.JFrame {
         url = url.replace("[SampleId]", txtBillNo.getText());
         url = url.replace("[UserName]", Prefs.getUsername());
         url = url.replace("[Password]", Prefs.getPassword());
+        System.out.println("url = " + url);
 //        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
         String res = sendRestfulRequest(url);
 //        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
+        System.out.println("res = " + res);
         String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
-        txtLog.setText(txtLog.getText() + "\nPrint Command = " + printCmd);
+        txtLog.setText(printCmd);
         printZpl(printCmd);
     }//GEN-LAST:event_btnPrintLabelsActionPerformed
 
