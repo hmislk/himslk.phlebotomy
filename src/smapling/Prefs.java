@@ -60,7 +60,7 @@ public class Prefs {
         Preferences prefs = Preferences.userNodeForPackage(Prefs.class);
         prefs.put(URL, getUrlValue());
         prefs.put(PRINTER, getPrinter());
-        prefs.put(PRINTER_COMMAND_SAMPLE, printSample);
+        prefs.put(PRINTER_COMMAND_SAMPLE, getPrintSample());
     }
 
     public static void getDataFromResponse(String response) {
@@ -379,6 +379,10 @@ public class Prefs {
     }
 
     public static String getPrintSample() {
+        if (printSample == null) {
+            printSample = "";
+        
+        }
         return printSample;
     }
 
@@ -386,6 +390,4 @@ public class Prefs {
         printSample = aPrintSample;
     }
 
-    
-    
 }

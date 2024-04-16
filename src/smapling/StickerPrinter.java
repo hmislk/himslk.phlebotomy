@@ -5,6 +5,9 @@
  */
 package smapling;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,6 +33,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -62,6 +67,7 @@ public class StickerPrinter extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         btnClear = new javax.swing.JButton();
+        btnNoPrint = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -97,6 +103,13 @@ public class StickerPrinter extends javax.swing.JFrame {
             }
         });
 
+        btnNoPrint.setText("No Print");
+        btnNoPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNoPrintActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,12 +128,14 @@ public class StickerPrinter extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtBillNo, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnPrintLabels, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addContainerGap(29, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnNoPrint)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnClear)
                         .addContainerGap())))
         );
@@ -137,7 +152,9 @@ public class StickerPrinter extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblBillNo)
                     .addComponent(jLabel1)
-                    .addComponent(btnClear))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnClear)
+                        .addComponent(btnNoPrint)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -195,47 +212,35 @@ public class StickerPrinter extends javax.swing.JFrame {
     }
 
     private String parseJsonObjectAndReplaceInTemplate(JSONObject jsonObject, String template) {
-        System.out.println("template = " + template);
-        System.out.println("jsonObject = " + jsonObject);
-//        System.out.println("template = " + template);
-//        txtLog.append("/n");
-//        txtLog.append("template = " + template);
-//        txtLog.append("jsonObject = " + jsonObject);
-        String t = new String(template);
+        System.out.println("Template before replacement: " + template);
+        System.out.println("JSON Object: " + jsonObject);
+        String resultTemplate = new String(template);
+
+        Map<String, String> replacements = new HashMap<>();
         try {
-            String name = jsonObject.getString("name");
-            String insId = jsonObject.getString("insid");
-            String tests = jsonObject.getString("tests");
-            String barcode = jsonObject.getString("barcode");
-//            String age = jsonObject.getString("age");
-            String sex = jsonObject.getString("sex");
-            String deptId = jsonObject.getString("deptid");
-            String tube = jsonObject.getString("tube");
-            String billDate = jsonObject.getString("billDate");
-            txtLog.append(billDate);
-            System.out.println("t = " + t);
-            t = t.replace("[name]", name);
-            System.out.println("t = " + t);
-            t = t.replace("[insId]", insId);
-            System.out.println("t = " + t);
-            t = t.replace("[tests]", tests);
-            System.out.println("t = " + t);
-            t = t.replace("[barcode]", barcode);
-            System.out.println("t = " + t);
-//            t = t.replace("[age]", age);
-            System.out.println("t = " + t);
-            t = t.replace("[sex]", sex);
-            System.out.println("t = " + t);
-            t = t.replace("[deptId]", deptId);
-            System.out.println("t = " + t);
-            t = t.replace("[tube]", tube);
-            System.out.println("t = " + t);
-            t = t.replace("[billDate]", billDate);
-            System.out.println("t = " + t);
+            // Define all keys and their corresponding JSON fields
+            replacements.put("[name]", jsonObject.getString("name"));
+            replacements.put("[insId]", jsonObject.getString("insid"));
+            replacements.put("[tests]", jsonObject.getString("tests"));
+            replacements.put("[barcode]", String.valueOf(jsonObject.getLong("barcode")));
+            replacements.put("[sex]", jsonObject.getString("sex"));
+            replacements.put("[age]", jsonObject.getString("age"));
+            replacements.put("[deptId]", jsonObject.getString("deptid"));
+            replacements.put("[tube]", jsonObject.getString("tube"));
+            replacements.put("[billDate]", jsonObject.getString("billDate"));
+            // Optional: Add more fields if necessary
+
+            // Perform all replacements in the template
+            for (Map.Entry<String, String> entry : replacements.entrySet()) {
+                resultTemplate = resultTemplate.replace(entry.getKey(), entry.getValue());
+            }
+
         } catch (JSONException ex) {
             Logger.getLogger(StickerPrinter.class.getName()).log(Level.SEVERE, "Error parsing JSONObject", ex);
         }
-        return t;
+
+        System.out.println("Template after replacement: " + resultTemplate);
+        return resultTemplate;
     }
 
 
@@ -253,7 +258,7 @@ public class StickerPrinter extends javax.swing.JFrame {
         System.out.println("url = " + url);
 //        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
         String res = sendRestfulRequest(url);
-//        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
+        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
         System.out.println("res = " + res);
         String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
         txtLog.setText(printCmd);
@@ -269,6 +274,29 @@ public class StickerPrinter extends javax.swing.JFrame {
         // TODO add your handling code here:
         txtLog.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnNoPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNoPrintActionPerformed
+        if (txtBillNo.getText().trim().equals("")) {
+            JOptionPane.showMessageDialog(null, "Enter the Bill No", "Error", JOptionPane.ERROR_MESSAGE);
+            txtLog.setText(txtLog.getText() + "\nBill Number Entered is Empty ");
+            txtBillNo.requestFocus();
+        }
+//        txtLog.setText(txtLog.getText() + "\nBill Number Entered = " + txtBillNo.getText());
+        String url = Prefs.getUrlValue() + "api/lims/samples/[SampleId]/[UserName]/[Password]";
+        url = url.replace("[SampleId]", txtBillNo.getText());
+        url = url.replace("[UserName]", Prefs.getUsername());
+        url = url.replace("[Password]", Prefs.getPassword());
+        System.out.println("url = " + url);
+//        txtLog.setText(txtLog.getText() + "\nRequest = " + url);
+        String res = sendRestfulRequest(url);
+        txtLog.setText(txtLog.getText() + "\nResponse = " + res);
+        System.out.println("res = " + res);
+        String printCmd = parseJsonAndGeneratePrintCommand(res, Prefs.getPrintSample());
+        txtLog.setText(printCmd);
+        StringSelection stringSelection = new StringSelection(printCmd);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }//GEN-LAST:event_btnNoPrintActionPerformed
 
     public void printZpl(String commands) {
         String printerName = Prefs.getPrinter().toLowerCase();
@@ -359,6 +387,7 @@ public class StickerPrinter extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnNoPrint;
     private javax.swing.JButton btnPrintLabels;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
